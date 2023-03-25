@@ -1,59 +1,58 @@
-#ifndef _GAELLIB_ODOM_H_
-#define _GAELLIB_ODOM_H_
+#ifndef ODOM_H
+#define ODOM_H
 
-#include "gaellib/Point.hpp"
-#include "api.h"
-#include <memory>
+#include "api.h" 
+#include <cmath> 
+#include <vector>
+#include <queue>
+using namespace pros;
 
-namespace gaellib::odom {
+//Rotation: net amount of turning
+//Orientation: 0-360 of any yaw pitch or roll movement
+//Heading: 0-360 of only yaw, usually use this
 
-typedef enum EncoderType { ENCODER_ADI, ENCODER_ROTATION } EncoderType_e_t;
+/*units
+distance: inches
+rotation: radian
+*/
 
-// Odom Configuration
-typedef struct config_data_s {
-	int expanderPort = 0;
-    int rightEncoderPort = 0;
-    int leftEncoderPort = 0;
-	int middleEncoderPort = 0;
-    int imuPort = 0;
-    EncoderType_e_t encoderType;
-} config_data_s_t;
-
-// sensors
-extern std::shared_ptr<pros::Imu> imu;
-
-
-double getLeftEncoder();
-
-
-double getRightEncoder();
-
-
-double getMiddleEncoder();
-
-
-Point getPosition();
+/*formulas
+Arc length:
+s = rθ
+arc length = radius * arc angle in radian
+Law of Cos:
+c^2 = a^2 + b^2 - 2abCosC
+Sin = opposite / adjacent
+Cos = adjacent / hypo
+Tan = opposite / adjacent
+y=mx + b
+*/
+namespace gaellib::odom{
+inline double dis_FS = 5; //distance between forward and side tracking wheel
+inline double dis_FI = 8.9; //distance between forward and intake
 
 
-double getHeading(bool radians = false);
+//-----variables-----//
+
+inline double FTVal = 0, BTVal = 0; //current tracking wheel distances
+inline double IPos[3]; //Intake's x,y and angle at any moment 
 
 
-void reset(Point point = {0, 0});
+//-----functions-----//
+void calcWheelVals(double dis, double ang); //calc the coord and add on, (angle change for the back wheel, as +90 degrees)
+//void calcCenterVals(); //calc the center coord and angle
+void initialize(double fx, double fy, double orient);
+double a_tan(double ratio);
+double calc_ang(double x1, double y1, double x2, double y2);
+struct robot{
+  //Drive Train Values
+  double x, y, ang;
+  bool PP;
+  //Robot Values
+  bool intake, bruh;
+  double roller;
+};
+inline std::queue<robot> q;
 
-
-void reset(Point point, double angle);
-
-
-double getAngleError(Point point);
-
-
-double getDistanceError(Point point);
-
-
-void init(bool debug, EncoderType_e_t encoderType, std::array<int, 3> encoderPorts,
-          int expanderPort, int imuPort, double track_width,
-          double middle_distance, double tpi, double middle_tpi);
-
-} 
-
+}
 #endif

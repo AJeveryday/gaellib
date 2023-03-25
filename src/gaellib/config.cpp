@@ -19,4 +19,8 @@ pros::Motor RB(DRIVE_RB, GEAR, RIGHTDIR);
 pros::Motor_Group left({LF,LM, LB});
 pros::Motor_Group right({RF, RM, RB});
 
+
 //ROTATIONAL 
+pros::Rotation TW_forw(10);
+pros::Rotation TW_side(8);
+

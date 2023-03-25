@@ -10,8 +10,8 @@
 #define DRIVE_RB 11
 
 //DIRECTION
-#define LEFTDIR false
-#define RIGHTDIR true
+#define LEFTDIR true
+#define RIGHTDIR false
 //GEARSET
 
 
@@ -53,6 +53,7 @@ extern pros::Motor LB;
 extern pros::Motor_Group left;
 extern pros::Motor_Group right;
 extern pros::Imu inertial;
-
+extern pros::Rotation TW_forw;
+extern pros::Rotation TW_side;
 
 
